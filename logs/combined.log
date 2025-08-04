@@ -653,3 +653,47 @@
 2024-10-03 17:00:00 [INFO]: Проверка дня рождения для Default Admin, осталось дней: 90 
 2024-10-03 17:00:00 [INFO]: Проверка повышения зарплаты для Default Admin, осталось дней: 182 
 2024-10-03 17:00:00 [INFO]: Удалено 0 старых прочитанных уведомлений 
+2025-08-03 19:38:09 [ERROR]: Ошибка синхронизации базы данных: ���������� "your_local_db_user" �� ������� �������������� �� ��������� ������ {
+  "name": "SequelizeConnectionError",
+  "parent": {
+    "length": 134,
+    "name": "error",
+    "severity": "��������",
+    "code": "28P01",
+    "file": "auth.c",
+    "line": "324",
+    "routine": "auth_failed"
+  },
+  "original": {
+    "length": 134,
+    "name": "error",
+    "severity": "��������",
+    "code": "28P01",
+    "file": "auth.c",
+    "line": "324",
+    "routine": "auth_failed"
+  },
+  "stack": "SequelizeConnectionError: ���������� \"your_local_db_user\" �� ������� �������������� �� ��������� ������\n    at Client._connectionCallback (F:\\QA_Engineer\\TS_Intership\\employee_management_api\\node_modules\\sequelize\\lib\\dialects\\postgres\\connection-manager.js:145:24)\n    at Client._handleErrorWhileConnecting (F:\\QA_Engineer\\TS_Intership\\employee_management_api\\node_modules\\pg\\lib\\client.js:326:19)\n    at Client._handleErrorMessage (F:\\QA_Engineer\\TS_Intership\\employee_management_api\\node_modules\\pg\\lib\\client.js:346:19)\n    at Connection.emit (node:events:518:28)\n    at F:\\QA_Engineer\\TS_Intership\\employee_management_api\\node_modules\\pg\\lib\\connection.js:116:12\n    at Parser.parse (F:\\QA_Engineer\\TS_Intership\\employee_management_api\\node_modules\\pg-protocol\\dist\\parser.js:36:17)\n    at Socket.<anonymous> (F:\\QA_Engineer\\TS_Intership\\employee_management_api\\node_modules\\pg-protocol\\dist\\index.js:11:42)\n    at Socket.emit (node:events:518:28)\n    at addChunk (node:internal/streams/readable:561:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)"
+}
+2025-08-03 22:02:44 [ERROR]: Ошибка синхронизации базы данных: ���� ����� "employee_db" �� ���� {
+  "name": "SequelizeConnectionError",
+  "parent": {
+    "length": 96,
+    "name": "error",
+    "severity": "��������",
+    "code": "3D000",
+    "file": "postinit.c",
+    "line": "1034",
+    "routine": "InitPostgres"
+  },
+  "original": {
+    "length": 96,
+    "name": "error",
+    "severity": "��������",
+    "code": "3D000",
+    "file": "postinit.c",
+    "line": "1034",
+    "routine": "InitPostgres"
+  },
+  "stack": "SequelizeConnectionError: ���� ����� \"employee_db\" �� ����\n    at Client._connectionCallback (F:\\QA_Engineer\\TS_Intership\\employee_management_api\\node_modules\\sequelize\\lib\\dialects\\postgres\\connection-manager.js:145:24)\n    at Client._handleErrorWhileConnecting (F:\\QA_Engineer\\TS_Intership\\employee_management_api\\node_modules\\pg\\lib\\client.js:326:19)\n    at Client._handleErrorMessage (F:\\QA_Engineer\\TS_Intership\\employee_management_api\\node_modules\\pg\\lib\\client.js:346:19)\n    at Connection.emit (node:events:518:28)\n    at F:\\QA_Engineer\\TS_Intership\\employee_management_api\\node_modules\\pg\\lib\\connection.js:116:12\n    at Parser.parse (F:\\QA_Engineer\\TS_Intership\\employee_management_api\\node_modules\\pg-protocol\\dist\\parser.js:36:17)\n    at Socket.<anonymous> (F:\\QA_Engineer\\TS_Intership\\employee_management_api\\node_modules\\pg-protocol\\dist\\index.js:11:42)\n    at Socket.emit (node:events:518:28)\n    at addChunk (node:internal/streams/readable:561:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)"
+}
