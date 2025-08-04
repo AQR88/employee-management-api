@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   app:
@@ -33,17 +33,17 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
-  # test:
-  #   build: .
-  #   container_name: my_test
-  #   environment:
-  #     - NODE_ENV=test
-  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/my_database_test
-  #   depends_on:
-  #     - db
-  #   volumes:
-  #     - ./:/app
-  #   command: sh -c "npx sequelize db:migrate && npm test"
+  test:
+    build: .
+    container_name: my_test
+    environment:
+      - NODE_ENV=test
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/my_database_test
+    depends_on:
+      - db
+    volumes:
+      - ./:/app
+    command: sh -c "npx sequelize db:migrate && npm test"
 
 volumes:
   db_data:
