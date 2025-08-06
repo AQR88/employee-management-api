@@ -1,4 +1,4 @@
-# version: '3.8'
+version: '3.8'
 
 services:
   app:
@@ -22,7 +22,7 @@ services:
     command: sh -c "npx sequelize-cli db:migrate && npm run dev"
 
   db:
-    image: postgres:16
+    image: postgres:17
     container_name: my_db
     environment:
       - POSTGRES_USER=postgres
@@ -32,6 +32,7 @@ services:
       - '5432:5432'
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
 
   test:
     build: .
@@ -43,7 +44,7 @@ services:
       - db
     volumes:
       - ./:/app
-    command: sh -c "npx sequelize db:migrate && npm test"
+    command: sh -c "npx sequelize-cli db:migrate && npm test"
 
 volumes:
   db_data:

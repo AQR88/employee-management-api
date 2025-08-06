@@ -1,13 +1,12 @@
 // test/notificationService.test.js
-const { expect } = require('chai');
-const sinon = require('sinon');
-const db = require('../models');
-const schedule = require('node-schedule');
-const { scheduleNotifications } = require('../services/notificationService');
+const { expect } = require("chai");
+const sinon = require("sinon");
+const db = require("../models");
+const schedule = require("node-schedule");
+const { scheduleNotifications } = require("../services/notificationService");
 
-describe('Notification Service', () => {
+describe("Notification Service", () => {
   let sandbox;
-
 
   beforeEach(async () => {
     sandbox = sinon.createSandbox();
@@ -17,39 +16,45 @@ describe('Notification Service', () => {
     await db.Notification.sync({ force: true }); // Создаем или обновляем таблицу Notifications
 
     // Мокаем методы создания уведомлений
-    sandbox.stub(db.Notification, 'findOne').resolves(null);
-    sandbox.stub(db.Notification, 'create').resolves();
+    sandbox.stub(db.Notification, "findOne").resolves(null);
+    sandbox.stub(db.Notification, "create").resolves();
   });
 
   afterEach(() => {
     sandbox.restore();
   });
 
-  it('should schedule daily jobs', () => {
-    const scheduleJobStub = sandbox.stub(schedule, 'scheduleJob');
+  it("should schedule daily jobs", () => {
+    const scheduleJobStub = sandbox.stub(schedule, "scheduleJob");
     scheduleNotifications();
 
     expect(scheduleJobStub.calledOnce).to.be.true;
-    expect(scheduleJobStub.firstCall.args[0]).to.equal('0 0 * * *');
+    expect(scheduleJobStub.firstCall.args[0]).to.equal("0 * * * *");
   });
-  it('should send birthday reminder notifications for users with birthdays in 30 days', async () => {
+  it("should send birthday reminder notifications for users with birthdays in 30 days", async () => {
     // Дата "сегодня"
     const today = new Date();
-    
-    // Получаем всех пользователей из базы
-    const users = await db.User.findAll({ where: { role: 'employee' } });
-    const admins = await db.User.findAll({ where: { role: 'admin' } });
 
-    const userWithUpcomingBirthday = users.find(user => {
+    // Получаем всех пользователей из базы
+    const users = await db.User.findAll({ where: { role: "employee" } });
+    const admins = await db.User.findAll({ where: { role: "admin" } });
+
+    const userWithUpcomingBirthday = users.find((user) => {
       const birthDate = new Date(user.birthDate);
       const currentYear = today.getFullYear();
-      let nextBirthday = new Date(currentYear, birthDate.getMonth(), birthDate.getDate());
+      let nextBirthday = new Date(
+        currentYear,
+        birthDate.getMonth(),
+        birthDate.getDate()
+      );
 
       if (nextBirthday < today) {
         nextBirthday.setFullYear(currentYear + 1);
       }
 
-      const daysUntilBirthday = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
+      const daysUntilBirthday = Math.ceil(
+        (nextBirthday - today) / (1000 * 60 * 60 * 24)
+      );
       return daysUntilBirthday === 30;
     });
 
@@ -58,26 +63,32 @@ describe('Notification Service', () => {
 
       expect(db.Notification.create.called).to.be.true;
       const notificationArgs = db.Notification.create.firstCall.args[0];
-      expect(notificationArgs.message).to.include(`Через месяц день рождения у ${userWithUpcomingBirthday.firstName} ${userWithUpcomingBirthday.lastName}`);
-      expect(notificationArgs.type).to.equal('birthday_reminder');
+      expect(notificationArgs.message).to.include(
+        `Через месяц день рождения у ${userWithUpcomingBirthday.firstName} ${userWithUpcomingBirthday.lastName}`
+      );
+      expect(notificationArgs.type).to.equal("birthday_reminder");
     } else {
-      console.log('Нет пользователей с днем рождения через 30 дней.');
+      console.log("Нет пользователей с днем рождения через 30 дней.");
     }
   });
 
-  it('should send salary increase reminder notifications for users with upcoming raises', async () => {
+  it("should send salary increase reminder notifications for users with upcoming raises", async () => {
     const today = new Date();
 
     // Получаем всех пользователей
-    const users = await db.User.findAll({ where: { role: 'employee' } });
-    const admins = await db.User.findAll({ where: { role: 'admin' } });
+    const users = await db.User.findAll({ where: { role: "employee" } });
+    const admins = await db.User.findAll({ where: { role: "admin" } });
 
-    const userWithUpcomingRaise = users.find(user => {
-      const lastIncrease = new Date(user.lastSalaryIncreaseDate || user.hireDate);
+    const userWithUpcomingRaise = users.find((user) => {
+      const lastIncrease = new Date(
+        user.lastSalaryIncreaseDate || user.hireDate
+      );
       const nextIncreaseDate = new Date(lastIncrease);
       nextIncreaseDate.setMonth(nextIncreaseDate.getMonth() + 6);
 
-      const daysUntilNextIncrease = Math.ceil((nextIncreaseDate - today) / (1000 * 60 * 60 * 24));
+      const daysUntilNextIncrease = Math.ceil(
+        (nextIncreaseDate - today) / (1000 * 60 * 60 * 24)
+      );
       return daysUntilNextIncrease === 30;
     });
 
@@ -86,45 +97,55 @@ describe('Notification Service', () => {
 
       expect(db.Notification.create.called).to.be.true;
       const notificationArgs = db.Notification.create.firstCall.args[0];
-      expect(notificationArgs.message).to.include(`Через месяц запланировано повышение зарплаты для сотрудника ${userWithUpcomingRaise.firstName} ${userWithUpcomingRaise.lastName}`);
-      expect(notificationArgs.type).to.equal('salary_increase_reminder');
+      expect(notificationArgs.message).to.include(
+        `Через месяц запланировано повышение зарплаты для сотрудника ${userWithUpcomingRaise.firstName} ${userWithUpcomingRaise.lastName}`
+      );
+      expect(notificationArgs.type).to.equal("salary_increase_reminder");
     } else {
-      console.log('Нет сотрудников, у которых запланировано повышение зарплаты через 30 дней.');
+      console.log(
+        "Нет сотрудников, у которых запланировано повышение зарплаты через 30 дней."
+      );
     }
   });
 
-  it('should automatically increase salary for eligible users', async () => {
+  it("should automatically increase salary for eligible users", async () => {
     const today = new Date();
 
     // Получаем всех пользователей
-    const users = await db.User.findAll({ where: { role: 'employee' } });
-    const admins = await db.User.findAll({ where: { role: 'admin' } });
+    const users = await db.User.findAll({ where: { role: "employee" } });
+    const admins = await db.User.findAll({ where: { role: "admin" } });
 
-    const userEligibleForRaise = users.find(user => {
-      const lastIncrease = new Date(user.lastSalaryIncreaseDate || user.hireDate);
+    const userEligibleForRaise = users.find((user) => {
+      const lastIncrease = new Date(
+        user.lastSalaryIncreaseDate || user.hireDate
+      );
       const nextIncreaseDate = new Date(lastIncrease);
       nextIncreaseDate.setMonth(nextIncreaseDate.getMonth() + 6);
 
-      const daysUntilNextIncrease = Math.ceil((nextIncreaseDate - today) / (1000 * 60 * 60 * 24));
+      const daysUntilNextIncrease = Math.ceil(
+        (nextIncreaseDate - today) / (1000 * 60 * 60 * 24)
+      );
       return daysUntilNextIncrease <= 0 && user.salary < 1500;
     });
 
     if (userEligibleForRaise) {
-      sandbox.stub(userEligibleForRaise, 'update').resolves();  // Мокаем метод update
+      sandbox.stub(userEligibleForRaise, "update").resolves(); // Мокаем метод update
 
       await scheduleNotifications();
 
       expect(userEligibleForRaise.update.calledOnce).to.be.true;
       const updateArgs = userEligibleForRaise.update.firstCall.args[0];
-      expect(updateArgs.salary).to.be.at.most(1500);  // Проверяем, что зарплата увеличена корректно
+      expect(updateArgs.salary).to.be.at.most(1500); // Проверяем, что зарплата увеличена корректно
 
       // Проверяем, что уведомление о повышении зарплаты было создано
       expect(db.Notification.create.called).to.be.true;
       const notificationArgs = db.Notification.create.firstCall.args[0];
-      expect(notificationArgs.message).to.include(`Зарплата сотрудника ${userEligibleForRaise.firstName} ${userEligibleForRaise.lastName} была автоматически увеличена`);
-      expect(notificationArgs.type).to.equal('salary_increased');
+      expect(notificationArgs.message).to.include(
+        `Зарплата сотрудника ${userEligibleForRaise.firstName} ${userEligibleForRaise.lastName} была автоматически увеличена`
+      );
+      expect(notificationArgs.type).to.equal("salary_increased");
     } else {
-      console.log('Нет сотрудников, которым требуется повысить зарплату.');
+      console.log("Нет сотрудников, которым требуется повысить зарплату.");
     }
   });
 });
